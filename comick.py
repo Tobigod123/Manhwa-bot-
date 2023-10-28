@@ -73,8 +73,8 @@ class ComickClient(MangaClient):
         links.reverse()
         slugs.reverse()
 
-        return list(map(lambda x: ComickMangaChapter(self, x[0], x[1], manga, [], x[2]), zip(texts, links, slugs))
-
+        return list(map(lambda x: ComickMangaChapter(self, x[0], x[1], manga, [], x[2]), zip(texts, links, slugs)))
+        
     async def pictures_from_chapters(self, content: bytes, response=None):
         data = json.loads content.decode()
 
