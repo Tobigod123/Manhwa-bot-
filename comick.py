@@ -1,11 +1,8 @@
-
 import json
 from dataclasses import dataclass
 from typing import List, AsyncIterable
 from urllib.parse import urlparse, urljoin, quote
-
 from plugins.client import MangaClient, MangaCard, MangaChapter, LastChapter
-
 
 @dataclass
 class ComickMangaCard(MangaCard):
@@ -14,14 +11,12 @@ class ComickMangaCard(MangaCard):
     def get_url(self):
         return f"https://comick.app/comic/{self.slug}"
 
-
 @dataclass
 class ComickMangaChapter(MangaChapter):
     slug: str
 
     def get_url(self):
         return f"{self.manga.get_url()}/{self.slug}"
-
 
 class ComickClient(MangaClient):
     base_url = urlparse("https://api.comick.app/")
@@ -73,15 +68,15 @@ class ComickClient(MangaClient):
             texts.append(title)
             links.append(link)
             slugs.append(slug)
-        
+
         texts.reverse()
         links.reverse()
         slugs.reverse()
 
-        return list(map(lambda x: ComickMangaChapter(self, x[0], x[1], manga, [], x[2]), zip(texts, links, slugs)))
+        return list(map(lambda x: ComickMangaChapter(self, x[0], x[1], manga, [], x[2]), zip(texts, links, slugs))
 
     async def pictures_from_chapters(self, content: bytes, response=None):
-        data = json.loads(content.decode())
+        data = json.loads content.decode()
 
         if "message" in data:
             return []
@@ -119,7 +114,7 @@ class ComickClient(MangaClient):
     async def contains_url(self, url: str):
         return url.startswith(self.base_url.geturl())
 
-async def check_updated_urls(self, last_chapters: List[LastChapter]):
+    async def check_updated_urls(self, last_chapters: List[LastChapter]):
         content = await self.get_url(f'{self.updates_url}&lang={self.lang}')
 
         data = json.loads(content.decode())
@@ -162,3 +157,4 @@ async def check_updated_urls(self, last_chapters: List[LastChapter]):
     async def get_picture(self, manga_chapter: MangaChapter, url, *args, **kwargs):
         headers = {**self.pre_headers, 'Referer': self.base_url.geturl()}
         return await super(ComickClient, self).get_picture(manga_chapter, url, *args, headers=headers, **kwargs)
+        
